@@ -1,5 +1,5 @@
 # rfpwnon v-0.7
-<br>
+Written by Corey Harding from http://www.LegacySecurityGroup.com<br><br>
 Most update to date code available from: http://exploit.agency/sploit/rfpwnon<br>
 Demo at: https://www.legacysecuritygroup.com/index.php/categories/13-sdr/22-rfpwnon-py-the-ultimate-rfcat-ask-ook-brute-force-tool<br>
 <br>
