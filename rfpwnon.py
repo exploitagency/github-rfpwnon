@@ -4,7 +4,6 @@ import sys
 from rflib import *
 from struct import *
 import argparse
-import pwnlib
 import bitstring
 
 #rfpwnon.py was written by LegacySecurityGroup.com and is
@@ -119,10 +118,46 @@ ConfigureD(d)
 #print "rfcat Config:"
 #print d.reprRadioConfig()
 
+
+############### FROM https://en.m.wikipedia.org/wiki/De_Bruijn_sequence#Algorithm ###################
+def de_bruijn(k, n):
+    """
+    De Bruijn sequence for alphabet k
+    and subsequences of length n.
+    """
+    try:
+        # let's see if k can be cast to an integer;
+        # if so, make our alphabet a list
+        _ = int(k)
+        alphabet = list(map(str, range(k)))
+
+    except (ValueError, TypeError):
+        alphabet = k
+        k = len(k)
+
+    a = [0] * k * n
+    sequence = []
+
+    def db(t, p):
+        if t > n:
+            if n % p == 0:
+                sequence.extend(a[1:p + 1])
+        else:
+            a[t] = a[t - p]
+            db(t + 1, p)
+            for j in range(a[t - p] + 1, k):
+                a[t] = j
+                db(t + 1, t)
+    db(1, 1)
+    return "".join(alphabet[i] for i in sequence)
+
+############### END FROM https://en.m.wikipedia.org/wiki/De_Bruijn_sequence#Algorithm ###################
+
+
 #where the magic happens
 print "Generating de bruijn sequence..."
 tail = "0"
-debruijn = pwnlib.util.cyclic.cyclic(alphabet=brutechar, n =binL)
+debruijn = de_bruijn(brutechar,binL)
 for x in range(0, binL):
     looptail = ''.join(tail)
     fullbrute = debruijn+looptail
@@ -218,3 +253,4 @@ while(startn < brutelength):
 print ""
 print "Done."
 d.setModeIDLE()
+
