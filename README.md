@@ -15,7 +15,7 @@ optional arguments:
   -h, --help      show this help message and exit
   -v, --version   show program's version number and exit
   -f BASEFREQ     Specify the target frequency to transmit on, default is
-                  915000000.)
+                  915000000.
   -b BAUDRATE     Specify the baudrate of the signal, default is 2000.
   -l BINLENGTH    Specify the binary length of the signal to brute force. By
                   default this is the binary length before pwm encoding. When
