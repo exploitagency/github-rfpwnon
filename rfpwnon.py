@@ -16,7 +16,7 @@ import bitstring
 
 #parser and help
 parser = argparse.ArgumentParser(description='Application to use a rfcat compatible device to brute force a particular AM OOK or raw binary signal.',version="rfpwnon v-0.7")
-parser.add_argument('-f', action="store", default="915000000", dest="baseFreq",help='Specify the target frequency to transmit on, default is 915000000.)',type=int)
+parser.add_argument('-f', action="store", default="915000000", dest="baseFreq",help='Specify the target frequency to transmit on, default is 915000000.',type=int)
 parser.add_argument('-b', action="store", dest="baudRate",default=2000,help='Specify the baudrate of the signal, default is 2000.',type=int)
 parser.add_argument('-l', action="store", dest="binLength",default=6,help='Specify the binary length of the signal to brute force.  By default this is the binary length before pwm encoding.  When the flag --raw is set this is the binary length of the pwm encoded signal.',type=int)
 parser.add_argument('-r', action="store", dest="repeatTimes",default=1,help='Specify the number of times to repeat the signal.  By default this is set to 1 and uses the de bruijn sequence for speed.  When set greater than one the script sends each possible permutation of the signal individually and takes much longer to complete.  For some applications the signal is required to be sent multiple times.',type=int)
