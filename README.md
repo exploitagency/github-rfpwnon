@@ -3,10 +3,9 @@ Written by Corey Harding from http://www.LegacySecurityGroup.com<br><br>
 Video demo with instructions available at: https://www.legacysecuritygroup.com/index.php/categories/13-sdr/22-rfpwnon-py-the-ultimate-rfcat-ask-ook-brute-force-tool<br>
 <br>
 <pre>
-python rfpwnon.py --help
 usage: rfpwnon.py [-h] [-v] [-f BASEFREQ] [-b BAUDRATE] [-l BINLENGTH]
                   [-r REPEATTIMES] [--keys] [-p PPAD] [-t TPAD] [--raw]
-                  [--tri]
+                  [--tri] [--show]
 
 Application to use a rfcat compatible device to brute force a particular AM
 OOK or raw binary signal.
@@ -38,5 +37,5 @@ optional arguments:
                   full pwm encoded binary length using -l.
   --tri           This flag sets up the script to brute force a trinary
                   signal.
-
+  --show          Prints de Bruijn sequence before transmitting.
 </pre>

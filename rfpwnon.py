@@ -15,7 +15,7 @@ import bitstring
 #It is up to you to use this script both ethically and legally.
 
 #parser and help
-parser = argparse.ArgumentParser(description='Application to use a rfcat compatible device to brute force a particular AM OOK or raw binary signal.',version="rfpwnon v-0.7")
+parser = argparse.ArgumentParser(description='Application to use a rfcat compatible device to brute force a particular AM OOK or raw binary signal.',version="rfpwnon v-0.8")
 parser.add_argument('-f', action="store", default="915000000", dest="baseFreq",help='Specify the target frequency to transmit on, default is 915000000.',type=int)
 parser.add_argument('-b', action="store", dest="baudRate",default=2000,help='Specify the baudrate of the signal, default is 2000.',type=int)
 parser.add_argument('-l', action="store", dest="binLength",default=6,help='Specify the binary length of the signal to brute force.  By default this is the binary length before pwm encoding.  When the flag --raw is set this is the binary length of the pwm encoded signal.',type=int)
@@ -25,6 +25,7 @@ parser.add_argument('-p', action="store", dest="pPad",default=False,help='Specif
 parser.add_argument('-t', action="store", dest="tPad",default=False,help='Specify your own binary padding to be attached after the brute forced binary.',type=str)
 parser.add_argument('--raw', action="store_true",help='This flag disables the script from performing the pwm encoding of the binary signal.  When set you must specify the full pwm encoded binary length using -l.')
 parser.add_argument('--tri', action="store_true",help='This flag sets up the script to brute force a trinary signal.')
+parser.add_argument('--show', action="store_true",help='Prints de Bruijn sequence before transmitting.')
 results = parser.parse_args()
 
 #define what a 0 or a 1 represents after pwm encoding is applied, or even a 2 if trinary!
@@ -118,30 +119,21 @@ ConfigureD(d)
 #print "rfcat Config:"
 #print d.reprRadioConfig()
 
+#where the magic happens
+print "Generating de bruijn sequence..."
 
-############### FROM https://en.m.wikipedia.org/wiki/De_Bruijn_sequence#Algorithm ###################
-def de_bruijn(k, n):
-    """
-    De Bruijn sequence for alphabet k
-    and subsequences of length n.
-    """
-    try:
-        # let's see if k can be cast to an integer;
-        # if so, make our alphabet a list
-        _ = int(k)
-        alphabet = list(map(str, range(k)))
+##### de Bruijn Sequence borrowed from Peter Otten - http://code.activestate.com/lists/python-list/660415/ #####
+_mapping = bytearray(b"?")*256
+_mapping[:len(brutechar)] = brutechar
 
-    except (ValueError, TypeError):
-        alphabet = k
-        k = len(k)
-
-    a = [0] * k * n
-    sequence = []
-
+def debruijn_bytes(k, n):
+    a = k * n * bytearray([0])
+    sequence = bytearray()
+    extend = sequence.extend
     def db(t, p):
         if t > n:
             if n % p == 0:
-                sequence.extend(a[1:p + 1])
+                extend(a[1: p+1])
         else:
             a[t] = a[t - p]
             db(t + 1, p)
@@ -149,19 +141,13 @@ def de_bruijn(k, n):
                 a[t] = j
                 db(t + 1, t)
     db(1, 1)
-    return "".join(alphabet[i] for i in sequence)
+    return sequence.translate(_mapping).decode("ascii")
+##### end of borrowed code #####
 
-############### END FROM https://en.m.wikipedia.org/wiki/De_Bruijn_sequence#Algorithm ###################
+seq = debruijn_bytes(len(brutechar), binL)
+tail = seq[:binL-1]
+fullbrute = (seq+tail)
 
-
-#where the magic happens
-print "Generating de bruijn sequence..."
-tail = "0"
-debruijn = de_bruijn(brutechar,binL)
-for x in range(0, binL):
-    looptail = ''.join(tail)
-    fullbrute = debruijn+looptail
-    tail = tail +"0"
 print ""
 print 'Brute Forcing Frequency: %s' % freq
 
@@ -175,9 +161,10 @@ if(results.tPad is not False):
     print results.tPad
 
 #show the magic
-print ""
-print "De Bruijn Sequence:"
-print fullbrute
+if results.show:
+    print ""
+    print "De Bruijn Sequence:"
+    print fullbrute
 
 brutepacket = fullbrute
 
